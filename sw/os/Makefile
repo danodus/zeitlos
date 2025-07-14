@@ -1,7 +1,7 @@
 PREFIX = /opt/riscv32i/bin/riscv32-unknown-elf-
 ARCH = rv32i
 CC = $(PREFIX)gcc
-CFLAGS = -fPIC --std=gnu99 -Os -MD -Wall -march=$(ARCH) -I../common
+CFLAGS = -fPIC --std=gnu99 -Os -MD -Wall -march=$(ARCH) -I../common -Wno-implicit-function-declaration -Wno-int-conversion
 LDFLAGS = -fPIC
 LDSCRIPT = ../common/riscv-os.ld
 

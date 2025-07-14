@@ -22,6 +22,9 @@ module sysctl #()
 `ifdef OSC48
    input CLK_48,
 `endif
+`ifdef OSC25
+   input CLK_25,
+`endif
 
 `ifdef LED_RGB
 	output LED_R, LED_G,
@@ -111,17 +114,27 @@ module sysctl #()
 
 	// CLOCKS
 
+	wire clk375mhz;
 	wire clk125mhz;
 	wire clk100mhz;
+	wire clk96mhz;
 	wire clk75mhz;
 	wire clk50mhz;
-	wire clk48mhz = CLK_48;
+	wire clk48mhz;
+	wire clk25mhz;
 	wire clk12mhz;
 
 	wire sys_clk = clk48mhz;
 
+`ifndef OSC25
+	assign clk48mhz = CLK_48;
+`else
+	assign clk25mhz = CLK_25;
+`endif
+
 `ifdef ECP5
 
+`ifndef BOARD_ULX3S
 	wire pll_locked = pll0_locked && pll1_locked;
 	wire pll0_locked;
 	wire pll1_locked;
@@ -140,6 +153,36 @@ module sysctl #()
 		.clkout0(clk125mhz),
 		.locked(pll1_locked)
 	);
+`else
+	// ULX3S
+
+	wire pll_locked = pll0_locked && pll1_locked && pll2_locked;
+	wire pll0_locked;
+	wire pll1_locked;
+	wire pll2_locked;
+
+	pll25_0 #() pll0_i (
+		.clkin(clk25mhz),
+		.clkout0(clk100mhz),
+		.clkout1(clk75mhz),
+		.clkout2(clk50mhz),
+		.clkout3(clk12mhz),
+		.locked(pll0_locked)
+	);
+
+	pll25_1 #() pll1_i (
+		.clkin(clk25mhz),
+		.clkout0(clk375mhz),
+		.locked(pll1_locked)
+	);
+
+	pll25_2 #() pll2_i (
+		.clkin(clk25mhz),
+		.clkout0(clk96mhz),
+		.clkout1(clk48mhz),
+		.locked(pll2_locked)
+	);	
+`endif
 
 `elsif GATEMATE
 
@@ -917,7 +960,11 @@ module sysctl #()
 	(
 		.clk(wbm_clk),
 		.pclk(clk75mhz),
+`ifndef BOARD_ULX3S
 		.bclk(clk125mhz),
+`else
+		.bclk(clk375mhz),
+`endif
 		.resetn(~wbm_rst),
 		.pixel(gpu_pixel),
 		.x(gpu_x),

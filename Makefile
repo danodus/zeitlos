@@ -2,6 +2,9 @@ RTL_PICO = \
 	rtl/sysctl.v \
 	rtl/clk/pll0.v \
 	rtl/clk/pll1.v \
+	rtl/clk/pll25_0.v \
+	rtl/clk/pll25_1.v \
+	rtl/clk/pll25_2.v \
 	rtl/cpu/picorv32/picorv32.v \
 	rtl/mtu.v \
 	rtl/arbiter.v \
@@ -167,6 +170,14 @@ else ifeq ($(BOARD), lakritz)
 	LPF = lakritz_v0.lpf
 	PROG = openFPGALoader -c $(CABLE)
 	FLASH = openFPGALoader -v -c $(CABLE) -f
+	FLASH_OFFSET = -o
+else ifeq ($(BOARD), ulx3s)
+	FAMILY = ecp5
+	DEVICE = 85k
+	PACKAGE = CABGA381
+	LPF = ulx3s_v31.lpf
+	PROG = openFPGALoader -b ulx3s
+	FLASH = openFPGALoader -v -b ulx3s -f
 	FLASH_OFFSET = -o
 else ifeq ($(BOARD), lebkuchen)
 	FAMILY = gatemate

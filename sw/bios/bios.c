@@ -221,25 +221,25 @@ void cmd_info() {
 	print_hex(tmp, 2);
 	print("\n");
 
-	print("usb_info: 0x");
-	tmp32 = reg_usb_info;
-	print_hex(tmp32, 8);
-	print("\n");
+	// print("usb_info: 0x");
+	// tmp32 = reg_usb_info;
+	// print_hex(tmp32, 8);
+	// print("\n");
 
-	print("usb_keys: 0x");
-	tmp32 = reg_usb_keys;
-	print_hex(tmp32, 8);
-	print("\n");
+	// print("usb_keys: 0x");
+	// tmp32 = reg_usb_keys;
+	// print_hex(tmp32, 8);
+	// print("\n");
 
-	print("usb_mouse: 0x");
-	tmp32 = reg_usb_mouse;
-	print_hex(tmp32, 8);
-	print("\n");
+	// print("usb_mouse: 0x");
+	// tmp32 = reg_usb_mouse;
+	// print_hex(tmp32, 8);
+	// print("\n");
 
-	print("usb_cursor: 0x");
-	tmp32 = reg_usb_cursor;
-	print_hex(tmp32, 8);
-	print("\n");
+	// print("usb_cursor: 0x");
+	// tmp32 = reg_usb_cursor;
+	// print_hex(tmp32, 8);
+	// print("\n");
 
 
 }
