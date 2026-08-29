@@ -481,8 +481,25 @@
 // to the 48MHz-crystal boards and the half-cell is still 8 cycles.
 `define AUDIO_RATE_RESET 8'd16
 
-`endif
+`elsif BOARD_ICEPI_ZERO
+
+`define FPGA_ECP5
+`define OSC50
+`define MEM 32
+`define MEM_SDRAM
+`define MEM_VRAM
+`define MEM_ROM
+`define MEM_GLYPH
+`define GPU
+`define GPU_RASTER
+`define GPU_BLIT
+`define GPU_CURSOR
+`define GPU_DDMI
+`define UART0
+`define USB_HID
+`define SPI_SDCARD
 
 `endif	// ZSPEC
 
+`endif
 `endif

@@ -4,6 +4,8 @@ RTL_PICO = \
 	rtl/clk/pll1.v \
 	rtl/clk/pll0_25.v \
 	rtl/clk/pll1_25.v \
+	rtl/clk/pll0_50.v \
+	rtl/clk/pll1_50.v \
 	rtl/cpu/picorv32/picorv32.v \
 	rtl/cpu/zeitlos32/zeitlos32.v \
 	rtl/cpu/zeitlos32/zeitlos32_muldiv.v \
@@ -235,6 +237,14 @@ else ifeq ($(BOARD), ulx3s)
 	LPF = ulx3s.lpf
 	PROG = openFPGALoader -c $(CABLE)
 	FLASH = openFPGALoader -v -c $(CABLE) -f
+	FLASH_OFFSET = -o
+else ifeq ($(BOARD), icepi_zero)
+	FAMILY = ecp5
+	DEVICE = 25k
+	PACKAGE = CABGA256
+	LPF = icepi_zero.lpf
+	PROG = openFPGALoader -cft231X --pins=7:3:5:6
+	FLASH = openFPGALoader -v -cft231X --pins=7:3:5:6 -f
 	FLASH_OFFSET = -o
 else ifeq ($(BOARD), lebkuchen)
 	FAMILY = gatemate

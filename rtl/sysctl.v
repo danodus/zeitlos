@@ -244,6 +244,11 @@ module sysctl #()
 	inout [1:0] usb_host_dm,
 `endif
 
+`ifdef BOARD_ICEPI_ZERO
+	output [1:0] usb_host_pull_dp,
+	output [1:0] usb_host_pull_dm,
+`endif
+
 `ifdef MEM_ROM
    output CSPI_SS_FLASH,
    input CSPI_MISO,
@@ -262,6 +267,11 @@ module sysctl #()
 	assign LED_G = ~(|cpu_irq);
 `endif
 
+`ifdef BOARD_ICEPI_ZERO
+	assign usb_host_pull_dp = 2'b0;
+	assign usb_host_pull_dm = 2'b0;
+`endif
+
 	// CLOCKS
 
 	wire clk126mhz;
@@ -276,6 +286,8 @@ module sysctl #()
 	assign clk48mhz = CLK_48;
 `elsif OSC25
 	assign clk25mhz = CLK_25;
+`elsif OSC50
+	assign clk50mhz = CLK_50;
 `endif
 
 	wire sys_clk = clk48mhz;
@@ -314,6 +326,24 @@ module sysctl #()
 
 	pll1_25 #() pll1_i (
 		.clkin(clk25mhz),
+		.clkout2(clk126mhz),
+		.clkout3(clk25_2mhz),
+		.locked(pll1_locked)
+	);
+
+`elsif OSC50
+
+	pll0_50 #() pll0_i (
+		.clkin(clk50mhz),
+		.clkout0(clk100mhz),
+		.clkout2(clk48mhz),
+		.clkout3(clk12mhz),
+		.locked(pll0_locked)
+	);
+
+	pll1_50 #() pll1_i (
+		.clkin(clk50mhz),
+		.clkout0(),
 		.clkout2(clk126mhz),
 		.clkout3(clk25_2mhz),
 		.locked(pll1_locked)
