@@ -19,63 +19,74 @@
 
 set -euo pipefail
 
+# mkfatimg.sh -- build the Zeitlos SD card image
+#
+# Produces images/zeitlos.img.gz: a FAT32 image holding every app that
+# has a built .bin under sw/apps/<name>/<name>.bin, each stored by its
+# bare name (<name>, no extension) so the running system finds it with
+# `run <name>` / the dock. Apps that did not build (a deliberately
+# removed one, an app whose sources are currently broken -- e.g. gpu3d
+# when gpu3d.h/stl.h is missing) are simply skipped with a note.
+#
+# Uses mtools rather than mkfs.fat + loop mounts, so it needs no root
+# and works identically on macOS and Linux:
+#
+#   macOS:      brew install mtools
+#   Debian/Ub:  sudo apt install mtools
+#
+# Usage, from the repo root (after `make` so the apps exist, or just
+# use the `sdimg` target -- ./sdimg builds them for you):
+#
+#   tools/mkfatimg.sh
+#   gzip -dc images/zeitlos.img.gz | sudo dd of=/dev/sdX bs=4M status=progress conv=fsync
+#
+# SIZE_MB (default 64) can be overridden:
+#
+#   ZTL_IMG_SIZE_MB=128 tools/mkfatimg.sh
+
 IMAGE="images/zeitlos.img"
-SIZE_MB=64
-MOUNT_DIR=$(mktemp -d)
+SIZE_MB="${ZTL_IMG_SIZE_MB:-64}"
 
-cleanup()
-{
-    umount "$MOUNT_DIR" 2>/dev/null || true
-    rmdir "$MOUNT_DIR"
-}
+for tool in mformat mcopy mdir minfo gzip truncate; do
+	command -v "$tool" >/dev/null || {
+		echo "mkfatimg: '$tool' not found -- install mtools" \
+			"(brew install mtools, or apt install mtools) and retry" >&2
+		exit 1
+	}
+done
 
-trap cleanup EXIT
-
+mkdir -p "$(dirname "$IMAGE")"
 rm -f "$IMAGE" "$IMAGE.gz"
 
+# A blank image the right size; block size 512, matching the card
+# layout the SD driver (sw/os/fs/fatfs/sdmm.c) is brought up against.
 truncate -s "${SIZE_MB}M" "$IMAGE"
 
-mkfs.fat \
-    -F 32 \
-    -S 512 \
-    -s 1 \
-    -n ZEITLOS \
-    "$IMAGE"
+# FAT32, one sector per cluster (smallest FAT32 allows; matches the
+# original mkfs.fat -s 1 the release image used). total sectors
+# = SIZE_MB*1024*1024/512. h/s are boot-sector bookkeeping values that
+# FatFs does not look at -- any consistent pair works.
+SECS=$((SIZE_MB * 1024 * 1024 / 512))
+mformat -F -i "$IMAGE" -v ZEITLOS -T "$SECS" -h 128 -s 32 -c 1 ::
 
-mount -o loop "$IMAGE" "$MOUNT_DIR"
+copied=0
+skipped=0
+for appdir in sw/apps/*/; do
+	name=$(basename "$appdir")
+	bin="$appdir/$name.bin"
+	if [ ! -f "$bin" ]; then
+		echo "mkfatimg: skipping $name (no $name.bin -- not built?)"
+		skipped=$((skipped + 1))
+		continue
+	fi
+	mcopy -i "$IMAGE" "$bin" "::$name"
+	echo "mkfatimg: copied $name"
+	copied=$((copied + 1))
+done
 
-# we exclude core apps since they should exist on flash
-
-# make directory skeleton
-mkdir "$MOUNT_DIR/docs"
-mkdir "$MOUNT_DIR/ark"
-mkdir "$MOUNT_DIR/user"
-
-# supplemental apps
-cp sw/apps/files/files.bin "$MOUNT_DIR/files"
-cp sw/apps/text/text.bin "$MOUNT_DIR/text"
-cp sw/apps/read/read.bin "$MOUNT_DIR/read"
-cp sw/apps/draw/draw.bin "$MOUNT_DIR/draw"
-cp sw/apps/info/info.bin "$MOUNT_DIR/info"
-cp sw/apps/calc/calc.bin "$MOUNT_DIR/calc"
-cp sw/apps/clock/clock.bin "$MOUNT_DIR/clock"
-cp sw/apps/settings/settings.bin "$MOUNT_DIR/settings"
-cp sw/apps/track/track.bin "$MOUNT_DIR/track"
-
-# games and demos
-cp sw/apps/space3d/space3d.bin "$MOUNT_DIR/space3d"
-cp sw/apps/gamedemo/gamedemo.bin "$MOUNT_DIR/gamedemo"
-cp sw/apps/gpu3d/gpu3d.bin "$MOUNT_DIR/gpu3d"
-
-# misc
-cp sw/apps/portdemo/portdemo.bin "$MOUNT_DIR/portdemo"
-cp docs/*.md "$MOUNT_DIR/docs/"
-cp sw/data/ark/*.md "$MOUNT_DIR/ark/"
-
-sync
-ls -l "$MOUNT_DIR"
-umount "$MOUNT_DIR"
-
-fsck.fat -v "$IMAGE"
+# Sanity: FAT geometry and the directory we ended up with.
+minfo -i "$IMAGE" :: | sed -n '1,2p'
+mdir -i "$IMAGE" ::
 
 gzip "$IMAGE"
+echo "mkfatimg: done -- $copied apps in $IMAGE.gz, $skipped skipped"

@@ -486,6 +486,16 @@ os:
 apps:
 	cd sw/apps && make
 
+# Build the SD card image (images/zeitlos.img.gz) from whatever has a
+# built .bin under sw/apps/<name>/ -- see tools/mkfatimg.sh. Board
+# independent: an app binary is an app binary whatever it was built
+# for, and the four core apps (wm/net/repl/term) are in flash anyway;
+# what this card adds is the apps beyond the core four. Apps that
+# aren't built (e.g. gpu3d, when its data headers are absent) are
+# skipped with a note. Needs mtools on the host -- see the script.
+sdimg: apps
+	tools/mkfatimg.sh
+
 # Publish every built app to a TFTP root, so a running machine can pull
 # the latest builds with `tget` instead of `xf` over the serial link.
 # Each app lands under its bare name -- sw/apps/text/text.bin becomes
@@ -578,4 +588,4 @@ clean_bios:
 clean_apps:
 	cd sw/apps && make clean
 
-.PHONY: clean_bios bios apps tftp-dist timing path util test_blit
+.PHONY: clean_bios bios apps tftp-dist timing path util test_blit sdimg
