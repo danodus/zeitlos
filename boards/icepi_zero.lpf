@@ -1,0 +1,230 @@
+BLOCK RESETPATHS;
+BLOCK ASYNCPATHS;
+
+# Icepi Zero
+# Keep Lakritz SOC port names, map them onto Icepi Zero pins.
+
+# ----------------------------------------------------------------------
+# Clock
+# Icepi Zero onboard oscillator: 50 MHz
+# ----------------------------------------------------------------------
+
+LOCATE COMP "CLK_50" SITE "M1";
+IOBUF PORT "CLK_50" IO_TYPE=LVCMOS33;
+FREQUENCY PORT "CLK_50" 50.0 MHz;
+
+# ----------------------------------------------------------------------
+# LED
+# Icepi Zero LED0
+# ----------------------------------------------------------------------
+
+LOCATE COMP "LED_B" SITE "E13";
+IOBUF PORT "LED_B" IO_TYPE=LVCMOS33;
+
+# ----------------------------------------------------------------------
+# SDRAM
+# ULX3S MT48LC32M16
+# ----------------------------------------------------------------------
+
+LOCATE COMP "sdram_clock" SITE "A3";
+IOBUF PORT "sdram_clock" IO_TYPE=LVCMOS33;
+
+LOCATE COMP "sdram_a[0]" SITE "B10";
+IOBUF PORT "sdram_a[0]" IO_TYPE=LVCMOS33;
+LOCATE COMP "sdram_a[1]" SITE "A9";
+IOBUF PORT "sdram_a[1]" IO_TYPE=LVCMOS33;
+LOCATE COMP "sdram_a[2]" SITE "B9";
+IOBUF PORT "sdram_a[2]" IO_TYPE=LVCMOS33;
+LOCATE COMP "sdram_a[3]" SITE "A8";
+IOBUF PORT "sdram_a[3]" IO_TYPE=LVCMOS33;
+LOCATE COMP "sdram_a[4]" SITE "B8";
+IOBUF PORT "sdram_a[4]" IO_TYPE=LVCMOS33;
+LOCATE COMP "sdram_a[5]" SITE "A7";
+IOBUF PORT "sdram_a[5]" IO_TYPE=LVCMOS33;
+LOCATE COMP "sdram_a[6]" SITE "B7";
+IOBUF PORT "sdram_a[6]" IO_TYPE=LVCMOS33;
+LOCATE COMP "sdram_a[7]" SITE "A6";
+IOBUF PORT "sdram_a[7]" IO_TYPE=LVCMOS33;
+LOCATE COMP "sdram_a[8]" SITE "B6";
+IOBUF PORT "sdram_a[8]" IO_TYPE=LVCMOS33;
+LOCATE COMP "sdram_a[9]" SITE "A5";
+IOBUF PORT "sdram_a[9]" IO_TYPE=LVCMOS33;
+LOCATE COMP "sdram_a[10]" SITE "A10";
+IOBUF PORT "sdram_a[10]" IO_TYPE=LVCMOS33;
+LOCATE COMP "sdram_a[11]" SITE "B5";
+IOBUF PORT "sdram_a[11]" IO_TYPE=LVCMOS33;
+LOCATE COMP "sdram_a[12]" SITE "A4";
+IOBUF PORT "sdram_a[12]" IO_TYPE=LVCMOS33;
+
+LOCATE COMP "sdram_ba[0]" SITE "A11";
+IOBUF PORT "sdram_ba[0]" IO_TYPE=LVCMOS33;
+LOCATE COMP "sdram_ba[1]" SITE "B11";
+IOBUF PORT "sdram_ba[1]" IO_TYPE=LVCMOS33;
+
+LOCATE COMP "sdram_cs_n" SITE "B12";
+IOBUF PORT "sdram_cs_n" IO_TYPE=LVCMOS33;
+
+LOCATE COMP "sdram_cke" SITE "B4";
+IOBUF PORT "sdram_cke" IO_TYPE=LVCMOS33;
+
+LOCATE COMP "sdram_ras_n" SITE "A12";
+IOBUF PORT "sdram_ras_n" IO_TYPE=LVCMOS33;
+
+LOCATE COMP "sdram_cas_n" SITE "B13";
+IOBUF PORT "sdram_cas_n" IO_TYPE=LVCMOS33;
+
+LOCATE COMP "sdram_we_n" SITE "A13";
+IOBUF PORT "sdram_we_n" IO_TYPE=LVCMOS33;
+
+LOCATE COMP "sdram_dq[0]" SITE "B16";
+IOBUF PORT "sdram_dq[0]" IO_TYPE=LVCMOS33;
+LOCATE COMP "sdram_dq[1]" SITE "C14";
+IOBUF PORT "sdram_dq[1]" IO_TYPE=LVCMOS33;
+LOCATE COMP "sdram_dq[2]" SITE "C16";
+IOBUF PORT "sdram_dq[2]" IO_TYPE=LVCMOS33;
+LOCATE COMP "sdram_dq[3]" SITE "C15";
+IOBUF PORT "sdram_dq[3]" IO_TYPE=LVCMOS33;
+LOCATE COMP "sdram_dq[4]" SITE "D16";
+IOBUF PORT "sdram_dq[4]" IO_TYPE=LVCMOS33;
+LOCATE COMP "sdram_dq[5]" SITE "A15";
+IOBUF PORT "sdram_dq[5]" IO_TYPE=LVCMOS33;
+LOCATE COMP "sdram_dq[6]" SITE "B15";
+IOBUF PORT "sdram_dq[6]" IO_TYPE=LVCMOS33;
+LOCATE COMP "sdram_dq[7]" SITE "A14";
+IOBUF PORT "sdram_dq[7]" IO_TYPE=LVCMOS33;
+LOCATE COMP "sdram_dq[8]" SITE "A2";
+IOBUF PORT "sdram_dq[8]" IO_TYPE=LVCMOS33;
+LOCATE COMP "sdram_dq[9]" SITE "B2";
+IOBUF PORT "sdram_dq[9]" IO_TYPE=LVCMOS33;
+LOCATE COMP "sdram_dq[10]" SITE "E2";
+IOBUF PORT "sdram_dq[10]" IO_TYPE=LVCMOS33;
+LOCATE COMP "sdram_dq[11]" SITE "D1";
+IOBUF PORT "sdram_dq[11]" IO_TYPE=LVCMOS33;
+LOCATE COMP "sdram_dq[12]" SITE "C2";
+IOBUF PORT "sdram_dq[12]" IO_TYPE=LVCMOS33;
+LOCATE COMP "sdram_dq[13]" SITE "C1";
+IOBUF PORT "sdram_dq[13]" IO_TYPE=LVCMOS33;
+LOCATE COMP "sdram_dq[14]" SITE "C3";
+IOBUF PORT "sdram_dq[14]" IO_TYPE=LVCMOS33;
+LOCATE COMP "sdram_dq[15]" SITE "B1";
+IOBUF PORT "sdram_dq[15]" IO_TYPE=LVCMOS33;
+
+LOCATE COMP "sdram_dm[0]" SITE "B14";
+IOBUF PORT "sdram_dm[0]" IO_TYPE=LVCMOS33;
+
+LOCATE COMP "sdram_dm[1]" SITE "B3";
+IOBUF PORT "sdram_dm[1]" IO_TYPE=LVCMOS33;
+
+# ----------------------------------------------------------------------
+# Dual USB host PMOD on ULX3S J1
+#
+# PMOD pin 1 = USB2_DP (bottom socket)
+# PMOD pin 2 = USB2_DN (bottom socket)
+# PMOD pin 3 = USB1_DP (top socket)
+# PMOD pin 4 = USB1_DN (top socket)
+# ----------------------------------------------------------------------
+
+LOCATE COMP "usb_host_dp[0]" SITE "F15";
+IOBUF PORT "usb_host_dp[0]" IO_TYPE=LVCMOS33;
+
+LOCATE COMP "usb_host_pull_dp[0]" SITE "G15";
+IOBUF PORT "usb_host_pull_dp[0]" IO_TYPE=LVCMOS33;
+
+LOCATE COMP "usb_host_dm[0]" SITE "E16";
+IOBUF PORT "usb_host_dm[0]" IO_TYPE=LVCMOS33;
+
+LOCATE COMP "usb_host_pull_dm[0]" SITE "H14";
+IOBUF PORT "usb_host_pull_dm[0]" IO_TYPE=LVCMOS33;
+
+LOCATE COMP "usb_host_dp[1]" SITE "J16";
+IOBUF PORT "usb_host_dp[1]" IO_TYPE=LVCMOS33;
+
+LOCATE COMP "usb_host_pull_dp[1]" SITE "E14";
+IOBUF PORT "usb_host_pull_dp[1]" IO_TYPE=LVCMOS33;
+
+LOCATE COMP "usb_host_dm[1]" SITE "J15";
+IOBUF PORT "usb_host_dm[1]" IO_TYPE=LVCMOS33;
+
+LOCATE COMP "usb_host_pull_dm[1]" SITE "E11";
+IOBUF PORT "usb_host_pull_dm[1]" IO_TYPE=LVCMOS33;
+
+# ----------------------------------------------------------------------
+# GPDI / HDMI
+#
+# Lakritz DDMI naming retained.
+#
+# D0 -> GPDI pair 0
+# D1 -> GPDI pair 1
+# D2 -> GPDI pair 2
+# CK -> GPDI pair 3
+# ----------------------------------------------------------------------
+
+LOCATE COMP "DDMI_CK_P" SITE "R12";
+IOBUF PORT "DDMI_CK_P" IO_TYPE=LVCMOS33D;
+IOBUF PORT "DDMI_CK_P" DRIVE=4;
+
+LOCATE COMP "DDMI_D0_P" SITE "R13";
+IOBUF PORT "DDMI_D0_P" IO_TYPE=LVCMOS33D;
+IOBUF PORT "DDMI_D0_P" DRIVE=4;
+
+LOCATE COMP "DDMI_D1_P" SITE "R15";
+IOBUF PORT "DDMI_D1_P" IO_TYPE=LVCMOS33D;
+IOBUF PORT "DDMI_D1_P" DRIVE=4;
+
+LOCATE COMP "DDMI_D2_P" SITE "P16";
+IOBUF PORT "DDMI_D2_P" IO_TYPE=LVCMOS33D;
+IOBUF PORT "DDMI_D2_P" DRIVE=4;
+
+# ----------------------------------------------------------------------
+# SPI Flash
+# ----------------------------------------------------------------------
+
+LOCATE COMP "CSPI_SS_FLASH" SITE "N8";
+IOBUF PORT "CSPI_SS_FLASH" IO_TYPE=LVCMOS33;
+
+LOCATE COMP "CSPI_MISO" SITE "T7";
+IOBUF PORT "CSPI_MISO" IO_TYPE=LVCMOS33;
+
+LOCATE COMP "CSPI_MOSI" SITE "T8";
+IOBUF PORT "CSPI_MOSI" IO_TYPE=LVCMOS33;
+
+# ----------------------------------------------------------------------
+# Micro-SD
+#
+# SPI mapping:
+#   SD_SCK  -> SD CLK
+#   SD_MOSI -> SD CMD
+#   SD_MISO -> SD DAT0
+#   SD_SS   -> SD DAT3 / CS
+#
+# DAT1/DAT2 retained for the existing SOC interface.
+# ----------------------------------------------------------------------
+
+LOCATE COMP "SD_SCK" SITE "P15";
+IOBUF PORT "SD_SCK" IO_TYPE=LVCMOS33 PULLMODE=UP;
+
+LOCATE COMP "SD_MOSI" SITE "N16";
+IOBUF PORT "SD_MOSI" IO_TYPE=LVCMOS33 PULLMODE=UP;
+
+LOCATE COMP "SD_SS" SITE "M14";
+IOBUF PORT "SD_SS" IO_TYPE=LVCMOS33 PULLMODE=UP;
+
+LOCATE COMP "SD_MISO" SITE "P14";
+IOBUF PORT "SD_MISO" IO_TYPE=LVCMOS33 PULLMODE=UP;
+
+LOCATE COMP "SD_DAT1" SITE "R14";
+IOBUF PORT "SD_DAT1" IO_TYPE=LVCMOS33 PULLMODE=UP;
+
+LOCATE COMP "SD_DAT2" SITE "M15";
+IOBUF PORT "SD_DAT2" IO_TYPE=LVCMOS33 PULLMODE=UP;
+
+# ----------------------------------------------------------------------
+# UART
+# FTDI USB-serial interface
+# ----------------------------------------------------------------------
+
+LOCATE COMP "UART0_TX" SITE "K15";
+IOBUF PORT "UART0_TX" IO_TYPE=LVCMOS33 PULLMODE=UP DRIVE=4;
+
+LOCATE COMP "UART0_RX" SITE "K16";
+IOBUF PORT "UART0_RX" IO_TYPE=LVCMOS33 PULLMODE=UP;
