@@ -679,6 +679,17 @@ static bool wm_is_busy(void) {
 // Checked by name via the pid registry rather than by fixed pid: the
 // fixed Z_PID_* values are a fallback, and registration is what
 // actually signals "this service is up and listening".
+//
+// net is required only to have registered at least ONCE, not to still
+// be present: on a board with no ethernet hardware, net registers its
+// name and then exits cleanly (see sw/apps/net/net.c's own comment),
+// and the kernel reaper releases "net0" when it reaps the process
+// (kernel.c). A simultaneous `net0 && repl0` check would
+// keep WM_BUSY_STARTUP set forever on every netless board -- a Z
+// cursor that never clears and a dock that never launches anything.
+// The gate's real purpose (term finding repl before it starts) is
+// served by repl being up; net having run at all is all the latching
+// needs, which is what logged_net below provides.
 static bool core_services_ready(void) {
 
 	uint32_t pid;
@@ -687,12 +698,17 @@ static bool core_services_ready(void) {
 
 	// Log each service the first time it appears, so a service that
 	// never registers is obvious from the console rather than showing
-	// up only as a cursor that never changes.
+	// up only as a cursor that never changes. logged_net doubles as
+	// the latch the readiness check below relies on.
 	static bool logged_net, logged_repl;
 	if (net_up && !logged_net) { logged_net = true; printf("wm: net0 up\n"); }
 	if (repl_up && !logged_repl) { logged_repl = true; printf("wm: repl0 up\n"); }
 
-	return net_up && repl_up;
+	// repl must be reachable NOW -- it may genuinely be down. net just
+	// needs to have come up once, since by now it may already have
+	// detached (etherless board, killed, exited) even though it did
+	// everything this gate needed of it.
+	return repl_up && logged_net;
 
 }
 

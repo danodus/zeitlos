@@ -127,10 +127,15 @@ place that touches the register.
 connect has a timeout. Launched before `repl` has registered itself, it
 comes up as a blank window with no indication why.
 
-So `wm` sets `WM_BUSY_STARTUP` at startup and clears it once both
-`net0` and `repl0` appear in the pid registry -- checked by name rather
-than by fixed pid, because registration is what actually signals "up
-and listening". While busy, `dock_launch()` refuses:
+So `wm` sets `WM_BUSY_STARTUP` at startup and clears it once `repl0`
+is in the pid registry, with `net0` required only to have appeared at
+*some* point rather than to be present at the same instant: on a board
+with no ethernet, net registers its name and then exits cleanly (see
+`sw/apps/net/net.c`), and the kernel reaper releases `net0` when it
+reaps the process -- so a simultaneous `net0 && repl0` check would
+wedge the cursor forever on every netless board. Lookup is by name
+rather than by fixed pid, because registration is what actually
+signals "up and listening". While busy, `dock_launch()` refuses:
 
 ```
 wm: dock: busy, not launching 'term' yet
@@ -278,3 +283,6 @@ wm: busy=0x0 cursor=X
 - No `net0 up` / `repl0 up` line -- that service never registered, so
   `WM_BUSY_STARTUP` is never cleared and the cursor stays Z forever.
   Check `ps` to see whether the process is even running.
+  (`net0 up` appearing and then the cursor still staying Z is no
+  longer possible since net is only latched -- on an etherless board
+  net legitimately registers and detaches.)
