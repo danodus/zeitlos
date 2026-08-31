@@ -6,13 +6,14 @@ images/
 
 # RISC-V cross-compiler output in each app dir (Makefile: -MD deps, objs,
 # -S listing, objdump,.elf/.map/.bin; tracked *.bin data lives in sw/data/images/)
-sw/apps/**/*.o
-sw/apps/**/*.d
-sw/apps/**/*.asm
-sw/apps/**/*.dasm
-sw/apps/**/*.elf
-sw/apps/**/*.map
-sw/apps/**/*.bin
+sw/**/*.o
+sw/**/*.d
+sw/**/*.asm
+sw/**/*.dasm
+sw/**/*.elf
+sw/**/*.map
+sw/**/*.bin
+sw/bios/bios.hex
 
 # Runtime-persisted selection state written by the net app
 sw/apps/net/.*_selected

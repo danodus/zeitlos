@@ -21,12 +21,14 @@ set -euo pipefail
 
 # mkfatimg.sh -- build the Zeitlos SD card image
 #
-# Produces images/zeitlos.img.gz: a FAT32 image holding every app that
-# has a built .bin under sw/apps/<name>/<name>.bin, each stored by its
-# bare name (<name>, no extension) so the running system finds it with
-# `run <name>` / the dock. Apps that did not build (a deliberately
-# removed one, an app whose sources are currently broken -- e.g. gpu3d
-# when gpu3d.h/stl.h is missing) are simply skipped with a note.
+# Produces images/zeitlos.img.gz: a FAT32 image holding the same file
+# list the release images use (core apps live on flash, so only the
+# supplemental apps, games/demos and docs go on the card), each stored
+# by its bare name (<name>, no extension) so the running system finds
+# it with `run <name>` / the dock. Apps that did not build (a
+# deliberately removed one, an app whose sources are currently broken
+# -- e.g. gpu3d when gpu3d.h/stl.h is missing) are simply skipped with
+# a note.
 #
 # Uses mtools rather than mkfs.fat + loop mounts, so it needs no root
 # and works identically on macOS and Linux:
@@ -47,7 +49,7 @@ set -euo pipefail
 IMAGE="images/zeitlos.img"
 SIZE_MB="${ZTL_IMG_SIZE_MB:-64}"
 
-for tool in mformat mcopy mdir minfo gzip truncate; do
+for tool in mformat mcopy mmd mdir minfo gzip truncate; do
 	command -v "$tool" >/dev/null || {
 		echo "mkfatimg: '$tool' not found -- install mtools" \
 			"(brew install mtools, or apt install mtools) and retry" >&2
@@ -71,18 +73,44 @@ mformat -F -i "$IMAGE" -v ZEITLOS -T "$SECS" -h 128 -s 32 -c 1 ::
 
 copied=0
 skipped=0
-for appdir in sw/apps/*/; do
-	name=$(basename "$appdir")
-	bin="$appdir/$name.bin"
-	if [ ! -f "$bin" ]; then
-		echo "mkfatimg: skipping $name (no $name.bin -- not built?)"
+
+copy_app() {
+	if [ ! -f "$1" ]; then
+		echo "mkfatimg: skipping $(basename "$1" .bin) (no $1 -- not built?)"
 		skipped=$((skipped + 1))
-		continue
+		return
 	fi
-	mcopy -i "$IMAGE" "$bin" "::$name"
-	echo "mkfatimg: copied $name"
+	mcopy -i "$IMAGE" "$1" "::$2"
+	echo "mkfatimg: copied $2"
 	copied=$((copied + 1))
-done
+}
+
+# core apps exist on flash, so we exclude them; copy only the
+# supplemental apps, games/demos, and misc files.
+
+# make directory skeleton
+mmd -i "$IMAGE" ::docs ::ark ::user
+
+# supplemental apps
+copy_app sw/apps/files/files.bin files
+copy_app sw/apps/text/text.bin text
+copy_app sw/apps/read/read.bin read
+copy_app sw/apps/draw/draw.bin draw
+copy_app sw/apps/info/info.bin info
+copy_app sw/apps/calc/calc.bin calc
+copy_app sw/apps/clock/clock.bin clock
+copy_app sw/apps/settings/settings.bin settings
+copy_app sw/apps/track/track.bin track
+
+# games and demos
+copy_app sw/apps/space3d/space3d.bin space3d
+copy_app sw/apps/gamedemo/gamedemo.bin gamedemo
+copy_app sw/apps/gpu3d/gpu3d.bin gpu3d
+
+# misc
+copy_app sw/apps/portdemo/portdemo.bin portdemo
+mcopy -i "$IMAGE" docs/*.md ::docs/
+mcopy -i "$IMAGE" sw/data/ark/*.md ::ark/
 
 # Sanity: FAT geometry and the directory we ended up with.
 minfo -i "$IMAGE" :: | sed -n '1,2p'
